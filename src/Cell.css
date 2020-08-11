@@ -1,0 +1,20 @@
+.cell {
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+
+  border: 1px solid grey;
+  background-color: white;
+}
+
+.cell:hover {
+  background-color: #dbdbdb;
+}
+
+.cell.populated {
+  background-color: #f0e446;
+}
+
+.cell.populated:hover {
+  background-color: #cfc43a;
+}
