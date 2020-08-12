@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import  { Button } from 'semantic-ui-react';
 
 import Grid from './Grid';
 
@@ -19,8 +20,19 @@ class App extends React.Component {
 
   resetGrid = () => {
     //let grid = Array(this.state.rows).fill(Array(this.state.cols).fill(false));
-    let grid = (new Array(this.state.rows)).fill().map(() => { return new Array(this.state.cols).fill(false) })
-      
+    let grid = (new Array(this.state.rows)).fill().map(() => { return new Array(this.state.cols).fill(false) });
+    
+    this.setState({ grid: grid });
+  }
+
+  randomSeedGrid = () => {
+    let grid = (new Array(this.state.rows)).fill().map(() => { return new Array(this.state.cols).fill(false) });
+
+    for (let i = 0; i < this.state.rows; i++)
+      for (let j = 0; j < this.state.cols; j++)
+        if (Math.floor(Math.random() * 3) === 1)
+          grid[i][j] = true;
+    
     this.setState({ grid: grid });
   }
 
@@ -38,14 +50,17 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
+      <div className='app'>
         <h1>Game of Life</h1>
         <Grid
           grid={this.state.grid}
           toggleCellFunc={this.toggleCell}
         />
 
-        <button onClick={this.resetGrid}>Reset Grid</button>
+        <div className='button-container'>
+          <Button onClick={this.resetGrid}>Reset Grid</Button>
+          <Button onClick={this.randomSeedGrid}>Seed</Button>
+        </div>
       </div>
     );
   }
