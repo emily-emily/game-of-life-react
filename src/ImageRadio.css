@@ -1,0 +1,52 @@
+.imageRadioWrapper {
+  display: inline-block;
+  position: relative;
+  margin: 5px;
+}
+
+.imageRadioWrapper>input[type=radio] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+}
+
+.imageRadio {
+  padding: 10px;
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: rgb(212, 212, 212) 0 0 5px;
+}
+
+.imageRadio.small {
+  width: 60px;
+  height: 70px;
+}
+
+.imageRadio:hover {
+  box-shadow: rgb(196, 196, 196) 0 0 5px;
+  cursor: pointer;
+}
+
+.imageRadioWrapper>input[type=radio]:checked + div {
+  background-color: #e8e8e8;
+}
+
+.imageRadio>.imageRadioContent {
+  display: inline-block;
+  height: 30px;
+  width: 30px;
+}
+
+.imageRadio>.imageRadioBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+  background-color: lightpink;
+  z-index: -1;
+}

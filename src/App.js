@@ -4,6 +4,7 @@ import  { Button, Icon, Modal } from 'semantic-ui-react';
 import { Slider } from 'react-semantic-ui-range';
 
 import Grid from './Grid';
+import ImageRadio from './ImageRadio';
 
 class App extends React.Component {
   constructor(props) {
@@ -20,7 +21,7 @@ class App extends React.Component {
       grid: (new Array(rows)).fill().map(() => { return new Array(cols).fill(false) }),
       playing: false,
       interval: 500,
-      color: '#f0e446',
+      color: '#242424',
       settingsModal: false
     }
   }
@@ -35,6 +36,7 @@ class App extends React.Component {
   closeSettingsModal = () => { this.setState({ settingsModal: false }) }
 
   handleIntervalSliderChange = (val) => {this.setState({ interval: val })}
+  handleColorChange = (val) => {this.setState({ color: val })}
 
   step = () => {
     var gridCopy = this.state.grid.map(function(arr) { return arr.slice(); });
@@ -102,6 +104,29 @@ class App extends React.Component {
   }
 
   render() {
+    let colors = [
+      { name: 'Black', hex: '#242424' },
+      { name: 'Red', hex: '#e60000' },
+      { name: 'Orange', hex: '#ebab34' },
+      { name: 'Yellow', hex: '#f0e446' },
+      { name: 'Green', hex: '#1dc223' },
+      { name: 'Blue', hex: '#1555c2' },
+      { name: 'Purple', hex: '#9715c2' },
+      { name: 'Pink', hex: '#f760e3' }
+    ];
+
+    let colorOptions = colors.map(c => {
+      return <ImageRadio
+        small
+        name='color'
+        solidColor={c.hex}
+        value={c.hex}
+        label={c.name}
+        onClick={this.handleColorChange}
+        checked={c.hex === this.state.color}
+      />
+    });
+
     return (
       <div className='app'>
         <h1>Game of Life</h1>
@@ -144,6 +169,9 @@ class App extends React.Component {
                 onChange: value => this.handleIntervalSliderChange(1000/value)
               }}
             />
+
+            <label>Color</label><br />
+            {colorOptions}
           </Modal.Content>
         </Modal>
       </div>
