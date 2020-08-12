@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
-import  { Button, Icon } from 'semantic-ui-react';
+import  { Button, Icon, Modal } from 'semantic-ui-react';
+import { Slider } from 'react-semantic-ui-range';
 
 import Grid from './Grid';
 
@@ -17,18 +18,27 @@ class App extends React.Component {
       rows: rows,
       cols: cols,
       grid: (new Array(rows)).fill().map(() => { return new Array(cols).fill(false) }),
-      playing: false
+      playing: false,
+      interval: 500,
+      color: '#f0e446',
+      settingsModal: false
     }
   }
 
   togglePlay = () => {
     if (this.state.playing){ clearInterval(this.timer) }
-    else { this.timer = setInterval(this.step, 500) }
+    else { this.timer = setInterval(this.step, this.state.interval) }
     this.setState({ playing: !this.state.playing });
   }
 
+  openSettingsModal = () => { this.setState({ settingsModal: true }) }
+  closeSettingsModal = () => { this.setState({ settingsModal: false }) }
+
+  handleIntervalSliderChange = (val) => {this.setState({ interval: val })}
+
   step = () => {
-    let gridCopy = this.state.grid.slice();
+    var gridCopy = this.state.grid.map(function(arr) { return arr.slice(); });
+
     for (let r = 0; r < this.state.rows; r++){
       for (let c = 0; c < this.state.cols; c++){
         let neighours = this.nLiveNeighbours(r, c);
@@ -98,6 +108,7 @@ class App extends React.Component {
         <Grid
           grid={this.state.grid}
           toggleCellFunc={this.toggleCell}
+          cellColor={this.state.color}
         />
 
         <div className='button-container'>
@@ -105,8 +116,36 @@ class App extends React.Component {
           <Button onClick={this.step} disabled={this.state.playing}>Step</Button>
           <Button onClick={this.resetGrid} disabled={this.state.playing}>Reset Grid</Button>
           <Button onClick={this.randomSeedGrid} disabled={this.state.playing}>Seed</Button>
-          <Button icon disabled={this.state.playing}><Icon name='setting' /></Button>
+          <Button
+            icon
+            onClick={this.openSettingsModal}
+            disabled={this.state.playing}
+          >
+            <Icon name='setting' />
+          </Button>
         </div>
+
+        <Modal
+          closeIcon
+          onClose={this.closeSettingsModal}
+          open={this.state.settingsModal}
+        >
+          <Modal.Header>Settings</Modal.Header>
+          <Modal.Content>
+            <label>Play Speed</label>
+            <Slider
+              discrete 
+              color='blue'
+              settings={{
+                start: 1000/this.state.interval,
+                min: 1,
+                max: 5,
+                step: 1,
+                onChange: value => this.handleIntervalSliderChange(1000/value)
+              }}
+            />
+          </Modal.Content>
+        </Modal>
       </div>
     );
   }

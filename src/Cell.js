@@ -4,9 +4,14 @@ import './Cell.css';
 class Cell extends React.Component {
 
   render() {
+    let populatedStyle = {
+      backgroundColor: this.props.cellColor
+    }
+
     return (
       <div
-        className={this.props.populated ? 'populated cell' : 'cell'}
+        style={this.props.populated ? populatedStyle : {}}
+        className='cell'
         onClick={() => this.props.toggleCellFunc(this.props.boxId)}
       />
     );

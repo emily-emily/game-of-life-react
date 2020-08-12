@@ -13,6 +13,7 @@ class Grid extends React.Component {
           boxId={r + '_' + c}
           key={r + '_' + c}
           populated={val}
+          cellColor={this.props.cellColor}
           toggleCellFunc={this.props.toggleCellFunc}
         />;
       });

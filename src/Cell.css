@@ -8,13 +8,6 @@
 }
 
 .cell:hover {
-  background-color: #dbdbdb;
-}
-
-.cell.populated {
-  background-color: #f0e446;
-}
-
-.cell.populated:hover {
-  background-color: #cfc43a;
+  filter: brightness(85%);
+  cursor: pointer;
 }
