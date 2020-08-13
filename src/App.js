@@ -3,6 +3,8 @@ import './App.css';
 import  { Button, Icon, Modal } from 'semantic-ui-react';
 import { Slider } from 'react-semantic-ui-range';
 
+import { structures } from './structures';
+
 import Grid from './Grid';
 import ImageRadio from './ImageRadio';
 
@@ -10,8 +12,8 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    let rows = 30;
-    let cols = 30;
+    let rows = 28;
+    let cols = 40;
 
     this.timer = null;
 
@@ -22,7 +24,9 @@ class App extends React.Component {
       playing: false,
       interval: 500,
       color: '#242424',
-      settingsModal: false
+      generation: 0,
+      settingsModal: false,
+      structuresModal: false
     }
   }
 
@@ -34,6 +38,9 @@ class App extends React.Component {
 
   openSettingsModal = () => { this.setState({ settingsModal: true }) }
   closeSettingsModal = () => { this.setState({ settingsModal: false }) }
+
+  openStructuresModal = () => { this.setState({ structuresModal: true }) }
+  closeStructuresModal = () => { this.setState({ structuresModal: false }) }
 
   handleIntervalSliderChange = (val) => {this.setState({ interval: val })}
   handleColorChange = (val) => {this.setState({ color: val })}
@@ -53,7 +60,11 @@ class App extends React.Component {
       }
     }
 
-    this.setState({ grid: gridCopy });
+    // update grid and increment generation counter
+    this.setState({
+      grid: gridCopy,
+      generation: this.state.generation + 1
+    });
   }
 
   nLiveNeighbours = (r, c) => {
@@ -75,7 +86,10 @@ class App extends React.Component {
     //let grid = Array(this.state.rows).fill(Array(this.state.cols).fill(false));
     let grid = (new Array(this.state.rows)).fill().map(() => { return new Array(this.state.cols).fill(false) });
     
-    this.setState({ grid: grid });
+    this.setState({
+      grid: grid,
+      generation: 0
+    });
   }
 
   randomSeedGrid = () => {
@@ -86,7 +100,10 @@ class App extends React.Component {
         if (Math.floor(Math.random() * 5) === 1)
           grid[i][j] = true;
     
-    this.setState({ grid: grid });
+    this.setState({
+      grid: grid,
+      generation: 0
+    });
   }
 
   toggleCell = (id) => {
@@ -115,16 +132,21 @@ class App extends React.Component {
       { name: 'Pink', hex: '#f760e3' }
     ];
 
-    let colorOptions = colors.map(c => {
+    let colorOptions = colors.map((c, i) => {
       return <ImageRadio
         small
         name='color'
+        key={i}
         solidColor={c.hex}
         value={c.hex}
         label={c.name}
         onClick={this.handleColorChange}
         checked={c.hex === this.state.color}
       />
+    });
+
+    let structuresJSX = structures.map((s, i) => {
+      return <p key={i}>{s.name}</p>
     });
 
     return (
@@ -135,17 +157,17 @@ class App extends React.Component {
           toggleCellFunc={this.toggleCell}
           cellColor={this.state.color}
         />
+        <p>Generation: {this.state.generation}</p>
 
         <div className='button-container'>
           <Button primary icon onClick={this.togglePlay}><Icon name={this.state.playing ? 'pause' : 'play'} /></Button>
           <Button onClick={this.step} disabled={this.state.playing}>Step</Button>
+          <Button icon onClick={this.openStructuresModal} disabled={this.state.playing}>
+            <Icon name='folder outline' />
+          </Button>
           <Button onClick={this.resetGrid} disabled={this.state.playing}>Reset Grid</Button>
           <Button onClick={this.randomSeedGrid} disabled={this.state.playing}>Seed</Button>
-          <Button
-            icon
-            onClick={this.openSettingsModal}
-            disabled={this.state.playing}
-          >
+          <Button icon onClick={this.openSettingsModal} disabled={this.state.playing}>
             <Icon name='setting' />
           </Button>
         </div>
@@ -172,6 +194,17 @@ class App extends React.Component {
 
             <label>Color</label><br />
             {colorOptions}
+          </Modal.Content>
+        </Modal>
+
+        <Modal
+          closeIcon
+          onClose={this.closeStructuresModal}
+          open={this.state.structuresModal}
+        >
+          <Modal.Header>Structures</Modal.Header>
+          <Modal.Content>
+            {structuresJSX}
           </Modal.Content>
         </Modal>
       </div>

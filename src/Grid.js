@@ -5,7 +5,7 @@ import './Grid.css';
 class Grid extends React.Component {
 
   render() {
-    let width = this.props.grid.length * 20;
+    let width = this.props.grid[0].length * 20;
 
     let cells = this.props.grid.map((row, r) => {
       return row.map((val, c) => {

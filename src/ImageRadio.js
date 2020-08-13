@@ -15,7 +15,7 @@ class ImageRadio extends React.Component {
     else if (this.props.small) classes += ' small';
 
     let content;
-    if (this.props.imgSrc) content = <img className='imageRadioContent' src={this.props.imgSrc} />
+    if (this.props.imgSrc) content = <img className='imageRadioContent' src={this.props.imgSrc} alt={this.props.altText} />
     else if (this.props.solidColor) content = <div className='imageRadioContent' style={{backgroundColor: this.props.solidColor}} />
 
     let label;
