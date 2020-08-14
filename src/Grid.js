@@ -1,5 +1,4 @@
 import React from 'react';
-import Cell from './Cell';
 import './Grid.css';
 
 class Grid extends React.Component {
@@ -26,6 +25,23 @@ class Grid extends React.Component {
       >
         {cells}
       </div>
+    );
+  }
+}
+
+class Cell extends React.Component {
+
+  render() {
+    let populatedStyle = {
+      backgroundColor: this.props.cellColor
+    }
+
+    return (
+      <div
+        style={this.props.populated ? populatedStyle : {}}
+        className='cell'
+        onClick={() => this.props.toggleCellFunc(this.props.boxId)}
+      />
     );
   }
 }
