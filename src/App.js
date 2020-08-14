@@ -3,10 +3,9 @@ import './App.css';
 import  { Button, Icon, Modal } from 'semantic-ui-react';
 import { Slider } from 'react-semantic-ui-range';
 
-import { structures } from './structures';
-
 import Grid from './Grid';
 import ImageRadio from './ImageRadio';
+import StructureMenu from './structures/StructureMenu';
 
 class App extends React.Component {
   constructor(props) {
@@ -26,45 +25,52 @@ class App extends React.Component {
       color: '#242424',
       generation: 0,
       settingsModal: false,
-      structuresModal: false
+      structureMenu: false
     }
   }
 
-  togglePlay = () => {
+  toggleAutoPlay = () => {
     if (this.state.playing){ clearInterval(this.timer) }
-    else { this.timer = setInterval(this.step, this.state.interval) }
+    else { this.timer = setInterval(this.play, this.state.interval) }
     this.setState({ playing: !this.state.playing });
   }
 
   openSettingsModal = () => { this.setState({ settingsModal: true }) }
   closeSettingsModal = () => { this.setState({ settingsModal: false }) }
 
-  openStructuresModal = () => { this.setState({ structuresModal: true }) }
-  closeStructuresModal = () => { this.setState({ structuresModal: false }) }
+  openStructureMenu = () => { this.setState({ structureMenu: true }) }
+  closeStructureMenu = () => { this.setState({ structureMenu: false }) }
 
   handleIntervalSliderChange = (val) => {this.setState({ interval: val })}
   handleColorChange = (val) => {this.setState({ color: val })}
 
-  step = () => {
-    var gridCopy = this.state.grid.map(function(arr) { return arr.slice(); });
+  // steps one generation on the main grid
+  play = () => {
+    // step using a copy of the current grid
+    let newGrid = this.step(this.state.grid.map(function(arr) { return arr.slice(); }));
 
+    // update grid and increment generation counter
+    this.setState({
+      grid: newGrid,
+      generation: this.state.generation + 1
+    });
+  }
+
+  // returns grid of the next generation
+  step = (grid) => {
     for (let r = 0; r < this.state.rows; r++){
       for (let c = 0; c < this.state.cols; c++){
         let neighours = this.nLiveNeighbours(r, c);
         if (this.cellIsPopulated(r, c)){
           // a cell dies if there are less than 2 or more than 3 neighbours
-          if (neighours < 2 || neighours > 3) gridCopy[r][c] = false;
+          if (neighours < 2 || neighours > 3) grid[r][c] = false;
         }
         // an empty cell becomes a live cell if there are exactly 3 neighbours
-        else if (neighours === 3) gridCopy[r][c] = true;
+        else if (neighours === 3) grid[r][c] = true;
       }
     }
 
-    // update grid and increment generation counter
-    this.setState({
-      grid: gridCopy,
-      generation: this.state.generation + 1
-    });
+    return grid;
   }
 
   nLiveNeighbours = (r, c) => {
@@ -145,10 +151,6 @@ class App extends React.Component {
       />
     });
 
-    let structuresJSX = structures.map((s, i) => {
-      return <p key={i}>{s.name}</p>
-    });
-
     return (
       <div className='app'>
         <h1>Game of Life</h1>
@@ -160,9 +162,9 @@ class App extends React.Component {
         <p>Generation: {this.state.generation}</p>
 
         <div className='button-container'>
-          <Button primary icon onClick={this.togglePlay}><Icon name={this.state.playing ? 'pause' : 'play'} /></Button>
-          <Button onClick={this.step} disabled={this.state.playing}>Step</Button>
-          <Button icon onClick={this.openStructuresModal} disabled={this.state.playing}>
+          <Button primary icon onClick={this.toggleAutoPlay}><Icon name={this.state.playing ? 'pause' : 'play'} /></Button>
+          <Button onClick={this.play} disabled={this.state.playing}>Step</Button>
+          <Button icon onClick={this.openStructureMenu} disabled={this.state.playing}>
             <Icon name='folder outline' />
           </Button>
           <Button onClick={this.resetGrid} disabled={this.state.playing}>Reset Grid</Button>
@@ -197,16 +199,10 @@ class App extends React.Component {
           </Modal.Content>
         </Modal>
 
-        <Modal
-          closeIcon
-          onClose={this.closeStructuresModal}
-          open={this.state.structuresModal}
-        >
-          <Modal.Header>Structures</Modal.Header>
-          <Modal.Content>
-            {structuresJSX}
-          </Modal.Content>
-        </Modal>
+        <StructureMenu
+          open={this.state.structureMenu}
+          closeFunc={this.closeStructureMenu}
+        />
       </div>
     );
   }
