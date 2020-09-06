@@ -21,6 +21,7 @@ class App extends React.Component {
       cols: cols,
       grid: (new Array(rows)).fill().map(() => { return new Array(cols).fill(false) }),
       playing: false,
+      adding: null, // structure the user is currently placing
       interval: 500,
       color: '#242424',
       generation: 0,
@@ -88,13 +89,7 @@ class App extends React.Component {
     return count;
   }
 
-  cellIsPopulated = (r, c, grid) => {
-  //   console.log('grid.length' + grid.length)
-  //   console.log('grid[0].length' + grid[0].length)
-  //   if (r >= 0 && c >= 0 && r < grid.length && c < grid[0].length && grid[r][c]) console.log('(' + r + ', ' + c + ') is populated')
-  //   else console.log('(' + r + ', ' + c + ') is not populated')
-    return (r >= 0 && c >= 0 && r < grid.length && c < grid[0].length && grid[r][c])
-  }
+  cellIsPopulated = (r, c, grid) => { return (r >= 0 && c >= 0 && r < grid.length && c < grid[0].length && grid[r][c]) }
 
   resetGrid = () => {
     //let grid = Array(this.state.rows).fill(Array(this.state.cols).fill(false));

@@ -3,6 +3,7 @@ export const structures = [
     "name": "Blinker",
     "dimensions": [3, 3],
     "period": 2,
+    "type": "stationary",
     "grid": [
       [0, 0, 0],
       [1, 1, 1],
@@ -13,6 +14,7 @@ export const structures = [
     "name": "Toad",
     "dimensions": [4, 4],
     "period": 2,
+    "type": "stationary",
     "grid": [
       [0, 0, 0, 0],
       [0, 1, 1, 1],

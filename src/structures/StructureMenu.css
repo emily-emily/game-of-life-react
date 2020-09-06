@@ -1,5 +1,15 @@
-.modal-content {
-  display: flex;
+#modal-content {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#structure-list {
+  display: inline-flex;
+  height: 100%;
+  width: 100%;
+  transform: translateX(-100%);
+
+  transition-duration: .5s;
 }
 
 .structure-item {
@@ -10,4 +20,27 @@
 
 .structure-item:hover {
   cursor: pointer;
+}
+
+#structure-list.visible {
+  transform: translateX(0);
+}
+
+#structure-details {
+  display: inline-flex;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  padding: 10px 30px;
+  transform: translateX(0);
+
+  transition-duration: .5s;
+}
+
+#structure-details.visible {
+  transform: translateX(-100%);
+}
+
+#structure-grid {
+  padding: 0 20px;
 }
