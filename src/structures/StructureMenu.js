@@ -8,7 +8,7 @@ import Grid from './../Grid';
 class StructureMenu extends React.Component {
   render() {
     let structures = data.map((s, i) => {
-      return <StructureItem key={i} structure={s} />
+      return <StructureItem key={i} structure={s} stepFunc={this.props.stepFunc} />
     });
 
     return (
@@ -44,9 +44,7 @@ class StructureItem extends React.Component {
   toggleHover = () => { this.setState({ hover: !this.state.hover}) }
 
   play = () => {
-    if (this.state.hover){
-      // animate
-    }
+    if (this.state.hover) this.setState({ grid: this.props.stepFunc(this.state.grid) });
   }
 
   render() {

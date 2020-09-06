@@ -46,8 +46,7 @@ class App extends React.Component {
 
   // steps one generation on the main grid
   play = () => {
-    // step using a copy of the current grid
-    let newGrid = this.step(this.state.grid.map(function(arr) { return arr.slice(); }));
+    let newGrid = this.step(this.state.grid);
 
     // update grid and increment generation counter
     this.setState({
@@ -58,35 +57,44 @@ class App extends React.Component {
 
   // returns grid of the next generation
   step = (grid) => {
-    for (let r = 0; r < this.state.rows; r++){
-      for (let c = 0; c < this.state.cols; c++){
-        let neighours = this.nLiveNeighbours(r, c);
-        if (this.cellIsPopulated(r, c)){
+    // work on a copy of the grid
+    let newGrid = grid.map(function(arr) { return arr.slice(); });
+    for (let r = 0; r < grid.length; r++){
+      for (let c = 0; c < grid[0].length; c++){
+        let neighours = this.nLiveNeighbours(r, c, grid);
+        if (this.cellIsPopulated(r, c, grid)){
           // a cell dies if there are less than 2 or more than 3 neighbours
-          if (neighours < 2 || neighours > 3) grid[r][c] = false;
+          if (neighours < 2 || neighours > 3) newGrid[r][c] = false;
         }
         // an empty cell becomes a live cell if there are exactly 3 neighbours
-        else if (neighours === 3) grid[r][c] = true;
+        else if (neighours === 3) newGrid[r][c] = true;
       }
     }
 
-    return grid;
+    return newGrid;
   }
 
-  nLiveNeighbours = (r, c) => {
+  nLiveNeighbours = (r, c, g) => {
     let count = 0;
-    if (this.cellIsPopulated(r - 1, c - 1)) count++;
-    if (this.cellIsPopulated(r - 1, c)) count++;
-    if (this.cellIsPopulated(r - 1, c + 1)) count++;
-    if (this.cellIsPopulated(r, c - 1)) count++;
-    if (this.cellIsPopulated(r, c + 1)) count++;
-    if (this.cellIsPopulated(r + 1, c - 1)) count++;
-    if (this.cellIsPopulated(r + 1, c)) count++;
-    if (this.cellIsPopulated(r + 1, c + 1)) count++;
+    if (this.cellIsPopulated(r - 1, c - 1, g)) count++;
+    if (this.cellIsPopulated(r - 1, c, g)) count++;
+    if (this.cellIsPopulated(r - 1, c + 1, g)) count++;
+    if (this.cellIsPopulated(r, c - 1, g)) count++;
+    if (this.cellIsPopulated(r, c + 1, g)) count++;
+    if (this.cellIsPopulated(r + 1, c - 1, g)) count++;
+    if (this.cellIsPopulated(r + 1, c, g)) count++;
+    if (this.cellIsPopulated(r + 1, c + 1, g)) count++;
+    // console.log(count)
     return count;
   }
 
-  cellIsPopulated = (r, c) => { return (r >= 0 && c >= 0 && r < this.state.rows && c < this.state.cols && this.state.grid[r][c]) }
+  cellIsPopulated = (r, c, grid) => {
+  //   console.log('grid.length' + grid.length)
+  //   console.log('grid[0].length' + grid[0].length)
+  //   if (r >= 0 && c >= 0 && r < grid.length && c < grid[0].length && grid[r][c]) console.log('(' + r + ', ' + c + ') is populated')
+  //   else console.log('(' + r + ', ' + c + ') is not populated')
+    return (r >= 0 && c >= 0 && r < grid.length && c < grid[0].length && grid[r][c])
+  }
 
   resetGrid = () => {
     //let grid = Array(this.state.rows).fill(Array(this.state.cols).fill(false));
@@ -202,6 +210,7 @@ class App extends React.Component {
 
         <StructureMenu
           open={this.state.structureMenu}
+          stepFunc={this.step}
           closeFunc={this.closeStructureMenu}
         />
       </div>
