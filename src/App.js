@@ -155,6 +155,7 @@ class App extends React.Component {
       <div className='app'>
         <h1>Game of Life</h1>
         <Grid
+          interactive
           grid={this.state.grid}
           toggleCellFunc={this.toggleCell}
           cellColor={this.state.color}

@@ -3,11 +3,12 @@ import { Modal } from 'semantic-ui-react';
 import './StructureMenu.css';
 
 import { structures as data } from './structures';
+import Grid from './../Grid';
 
 class StructureMenu extends React.Component {
   render() {
     let structures = data.map((s, i) => {
-      return <StructureItem structure={s} />
+      return <StructureItem key={i} structure={s} />
     });
 
     return (
@@ -18,7 +19,9 @@ class StructureMenu extends React.Component {
       >
         <Modal.Header>Structures</Modal.Header>
         <Modal.Content>
-          {structures}
+          <div className='modal-content'>
+            {structures}
+          </div>
         </Modal.Content>
       </Modal>
     );
@@ -30,14 +33,30 @@ class StructureItem extends React.Component {
     super(props);
 
     this.state = {
-      generation: 0
+      generation: 0,
+      hover: false,
+      structure: this.props.structure,
+      grid: this.props.structure.grid,
+      timer: setInterval(this.play, 1000)
+    }
+  }
+
+  toggleHover = () => { this.setState({ hover: !this.state.hover}) }
+
+  play = () => {
+    if (this.state.hover){
+      // animate
     }
   }
 
   render() {
     return(
-      <div className='item'>
+      <div className='structure-item' onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover}>
         <p>{this.props.structure.name}</p>
+        <Grid
+          grid={this.state.grid}
+          cellColor={'#616161'}
+        />
       </div>
     );
   }

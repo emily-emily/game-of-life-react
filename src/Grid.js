@@ -4,27 +4,30 @@ import './Grid.css';
 class Grid extends React.Component {
 
   render() {
-    let width = this.props.grid[0].length * 20;
-
-    let cells = this.props.grid.map((row, r) => {
-      return row.map((val, c) => {
-        return <Cell
-          boxId={r + '_' + c}
-          key={r + '_' + c}
-          populated={val}
-          cellColor={this.props.cellColor}
-          toggleCellFunc={this.props.toggleCellFunc}
-        />;
-      });
-    });
 
     return (
-      <div
-        className='grid'
-        style={{width: width}}
-      >
-        {cells}
-      </div>
+      <table className='grid'>
+        <tbody>
+          {
+            this.props.grid.map((row, r) => {
+              return <tr key={r}>
+                {
+                  row.map((val, c) => {
+                    return <Cell
+                      interactive={this.props.interactive}
+                      boxId={r + '_' + c}
+                      key={r + '_' + c}
+                      populated={val}
+                      cellColor={this.props.cellColor}
+                      toggleCellFunc={this.props.toggleCellFunc}
+                    />;
+                  })
+                }
+              </tr>
+            })
+          }
+        </tbody>
+      </table>
     );
   }
 }
@@ -32,15 +35,13 @@ class Grid extends React.Component {
 class Cell extends React.Component {
 
   render() {
-    let populatedStyle = {
-      backgroundColor: this.props.cellColor
-    }
+    let populatedStyle = { backgroundColor: this.props.cellColor };
 
     return (
-      <div
+      <td
         style={this.props.populated ? populatedStyle : {}}
-        className='cell'
-        onClick={() => this.props.toggleCellFunc(this.props.boxId)}
+        className={this.props.interactive ? 'interactive cell' : 'cell'}
+        onClick={() => {if (this.props.interactive) this.props.toggleCellFunc(this.props.boxId)}}
       />
     );
   }

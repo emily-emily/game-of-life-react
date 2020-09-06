@@ -1,3 +1,13 @@
-.item {
+.modal-content {
+  display: flex;
+}
+
+.structure-item {
   display: inline-block;
+  margin: 10px;
+  align-self: flex-start;
+}
+
+.structure-item:hover {
+  cursor: pointer;
 }

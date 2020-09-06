@@ -1,6 +1,7 @@
 .grid {
   display: inline-block;
   line-height: 0;
+  border-collapse: collapse;
 }
 
 .cell {
@@ -12,7 +13,7 @@
   background-color: white;
 }
 
-.cell:hover {
+.cell.interactive:hover {
   filter: brightness(85%);
   cursor: pointer;
 }
