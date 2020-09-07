@@ -41,7 +41,7 @@ class StructureMenu extends React.Component {
         i={i}
         structure={s}
         stepFunc={this.props.stepFunc}
-        selectItem={this.selectItem}
+        selectItemFunc={this.selectItem}
       />
     });
 
@@ -103,12 +103,13 @@ class StructureItem extends React.Component {
         className='structure-item'
         onMouseEnter={this.toggleHover}
         onMouseLeave={this.toggleHover}
-        onClick={() => this.props.selectItem(this.props.i)}
+        onClick={() => this.props.selectItemFunc(this.props.i)}
       >
         <p>{this.props.structure.name}</p>
         <Grid
           grid={this.state.grid}
-          cellColor={'#616161'}
+          cellColor='#616161'
+          cellSize='17px'
         />
       </div>
     );

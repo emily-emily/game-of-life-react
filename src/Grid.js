@@ -15,6 +15,7 @@ class Grid extends React.Component {
                   row.map((val, c) => {
                     return <Cell
                       interactive={this.props.interactive}
+                      cellSize={this.props.cellSize}
                       boxId={r + '_' + c}
                       key={r + '_' + c}
                       populated={val}
@@ -35,11 +36,15 @@ class Grid extends React.Component {
 class Cell extends React.Component {
 
   render() {
-    let populatedStyle = { backgroundColor: this.props.cellColor };
+    let cellStyle = {
+      backgroundColor: this.props.populated ? this.props.cellColor : undefined,
+      height: this.props.cellSize ? this.props.cellSize : '20px',
+      width: this.props.cellSize ? this.props.cellSize : '20px'
+    }
 
     return (
       <td
-        style={this.props.populated ? populatedStyle : {}}
+        style={cellStyle}
         className={this.props.interactive ? 'interactive cell' : 'cell'}
         onClick={() => {if (this.props.interactive) this.props.toggleCellFunc(this.props.boxId)}}
       />
