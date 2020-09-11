@@ -4,7 +4,6 @@ import './Grid.css';
 class Grid extends React.Component {
 
   render() {
-
     return (
       <table className='grid'>
         <tbody>

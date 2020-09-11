@@ -1,12 +1,24 @@
 import React from 'react';
-import { Modal } from 'semantic-ui-react';
+import { Modal, Button, Popup } from 'semantic-ui-react';
 import './StructureMenu.css';
 
 import { structures as data } from './structures';
 import Grid from './../Grid';
 
+// provide one unit of padding around the structure
+data.forEach(s => {
+  s.grid.forEach(row => {
+    row.unshift(false);
+    row.push(false);
+  });
+
+  let emptyRow = new Array(s.grid[0].length).fill(false);
+  s.grid.unshift(emptyRow);
+  s.grid.push(emptyRow);
+});
+
 class StructureMenu extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -17,8 +29,9 @@ class StructureMenu extends React.Component {
     }
   }
 
+  // selects a new item to view in the details pane
   selectItem = (i) => {
-    console.log('selecting ' + i)
+    //console.log('selecting ' + i)
     this.setState({
       selected: i,
       detailsOpen: true,
@@ -27,6 +40,7 @@ class StructureMenu extends React.Component {
     });
   }
 
+  // steps a grid forward
   nextGen = () => {
     this.setState({
       selectedGrid: this.props.stepFunc(this.state.selectedGrid),
@@ -63,7 +77,7 @@ class StructureMenu extends React.Component {
                 <p>Dimensions: {data[this.state.selected].dimensions[0]}x{data[this.state.selected].dimensions[1]}</p>
                 <p>Period: {data[this.state.selected].period}</p>
                 <p>Type: {data[this.state.selected].type}</p>
-                <button onClick={() => this.setState({detailsOpen: false})}>back</button>
+                <Button className='back-button' onClick={() => this.setState({ detailsOpen: false })}>Back</Button>
               </div>
               <div id='structure-grid'>
                 <Grid
@@ -71,7 +85,16 @@ class StructureMenu extends React.Component {
                   cellColor={'#616161'}
                 />
                 <p>Generation {this.state.generation}</p>
-                <button onClick={this.nextGen}>Step</button>
+                <Popup
+                  content='Animation for spaceships is currently unavailable'
+                  disabled={data[this.state.selected].type !== 'spaceship'}
+                  trigger={
+                    <span><Button
+                      onClick={this.nextGen}
+                      disabled={data[this.state.selected].type === 'spaceship'}
+                    >Step</Button></span>
+                  }
+                />
               </div>
             </div>
           </div>
@@ -93,12 +116,21 @@ class StructureItem extends React.Component {
     }
   }
 
-  toggleHover = () => { this.setState({ hover: !this.state.hover}) }
+  toggleHover = () => { this.setState({ hover: !this.state.hover }) }
 
-  play = () => { if (this.state.hover) this.setState({ grid: this.props.stepFunc(this.state.grid) }) }
+  play = () => { if (this.state.hover && this.props.structure.type !== 'spaceship') this.setState({ grid: this.props.stepFunc(this.state.grid) }) }
 
   render() {
-    return(
+    // different cell sizes for different grid sizes
+    let gridSize = this.state.grid.length;
+    let cellSize;
+
+    if (gridSize <= 5) cellSize = '20px';
+    else if (gridSize <= 10) cellSize = '17px';
+    else if (gridSize <= 15) cellSize = '13px';
+    else cellSize = '10px';
+
+    return (
       <div
         className='structure-item'
         onMouseEnter={this.toggleHover}
@@ -107,9 +139,10 @@ class StructureItem extends React.Component {
       >
         <p>{this.props.structure.name}</p>
         <Grid
+          padded
           grid={this.state.grid}
           cellColor='#616161'
-          cellSize='17px'
+          cellSize={cellSize}
         />
       </div>
     );

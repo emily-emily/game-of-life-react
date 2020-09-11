@@ -2,8 +2,8 @@ export const structures = [
   {
     "name": "Blinker",
     "dimensions": [3, 3],
+    "type": "oscillator",
     "period": 2,
-    "type": "stationary",
     "grid": [
       [0, 0, 0],
       [1, 1, 1],
@@ -13,8 +13,8 @@ export const structures = [
   {
     "name": "Toad",
     "dimensions": [4, 4],
+    "type": "oscillator",
     "period": 2,
-    "type": "stationary",
     "grid": [
       [0, 0, 0, 0],
       [0, 1, 1, 1],
@@ -25,8 +25,8 @@ export const structures = [
   {
     "name": "Beacon",
     "dimensions": [4, 4],
+    "type": "oscillator",
     "period": 2,
-    "type": "stationary",
     "grid": [
       [1, 1, 0, 0],
       [1, 1, 0, 0],
@@ -37,8 +37,8 @@ export const structures = [
   {
     "name": "Pulsar",
     "dimensions": [15, 15],
+    "type": "oscillator",
     "period": 3,
-    "type": "stationary",
     "grid": [
       [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
@@ -55,6 +55,51 @@ export const structures = [
       [0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0],
       [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
       [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+    ]
+  },
+  {
+    "name": "Pentadecathlon",
+    "dimensions": [9, 16],
+    "type": "oscillator",
+    "period": 15,
+    "grid": [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 0, 0],
+      [0, 0, 1, 0, 0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0, 0, 1, 0, 0],
+      [0, 0, 1, 0, 0, 0, 1, 0, 0],
+      [0, 0, 0, 1, 0, 1, 0, 0, 0],
+      [0, 0, 0, 0, 1, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ]
+  },
+  {
+    "name": "Glider",
+    "dimensions": [3, 3],
+    "type": "spaceship",
+    "grid": [
+      [0, 0, 1],
+      [1, 0, 1],
+      [0, 1, 1]
+    ]
+  },
+  {
+    "name": "Medium Spaceship",
+    "dimensions": [5, 4],
+    "type": "spaceship",
+    "grid": [
+      [1, 0, 0, 1, 0],
+      [0, 0, 0, 0, 1],
+      [1, 0, 0, 0, 1],
+      [0, 1, 1, 1, 1]
     ]
   }
 ]

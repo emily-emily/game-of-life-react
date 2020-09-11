@@ -1,6 +1,7 @@
 #modal-content {
   white-space: nowrap;
   overflow: hidden;
+  height: 60vh;
 }
 
 #structure-list {
@@ -8,8 +9,9 @@
   height: 100%;
   width: 100%;
   transform: translateX(-100%);
-
   transition-duration: .5s;
+
+  flex-wrap: wrap;
 }
 
 .structure-item {
@@ -39,6 +41,11 @@
 
 #structure-details.visible {
   transform: translateX(-100%);
+}
+
+.back-button {
+  position: absolute;
+  bottom: 10px;
 }
 
 #structure-grid {
