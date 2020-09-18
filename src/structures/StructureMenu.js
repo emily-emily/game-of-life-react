@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Popup } from 'semantic-ui-react';
+import { Modal, Button, Popup, Icon } from 'semantic-ui-react';
 import './StructureMenu.css';
 
 import { structures as data } from './structures';
@@ -77,6 +77,10 @@ class StructureMenu extends React.Component {
                 <p>Dimensions: {data[this.state.selected].dimensions[0]}x{data[this.state.selected].dimensions[1]}</p>
                 <p>Period: {data[this.state.selected].period}</p>
                 <p>Type: {data[this.state.selected].type}</p>
+                <Button icon labelPosition='left' onClick={() => this.props.placeStructFunc(this.state.selectedGrid)}>
+                  Place this structure!
+                  <Icon name='paint brush' />
+                </Button>
                 <Button className='back-button' onClick={() => this.setState({ detailsOpen: false })}>Back</Button>
               </div>
               <div id='structure-grid'>

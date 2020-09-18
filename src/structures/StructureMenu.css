@@ -46,6 +46,7 @@
 .back-button {
   position: absolute;
   bottom: 10px;
+  left: 30px;
 }
 
 #structure-grid {

@@ -15,18 +15,19 @@ class App extends React.Component {
     let cols = 40;
 
     this.timer = null;
+    this.cellSize = '20px';
 
     this.state = {
       rows: rows,
       cols: cols,
       grid: (new Array(rows)).fill().map(() => { return new Array(cols).fill(false) }),
       playing: false,
-      adding: null, // structure the user is currently placing
+      selectedStruct: null, // structure that is being placed
       interval: 500,
       color: '#242424',
       generation: 0,
-      settingsModal: false,
-      structureMenu: false
+      structureModalOpen: false,
+      structureMenuOpen: false
     }
   }
 
@@ -36,11 +37,11 @@ class App extends React.Component {
     this.setState({ playing: !this.state.playing });
   }
 
-  openSettingsModal = () => { this.setState({ settingsModal: true }) }
-  closeSettingsModal = () => { this.setState({ settingsModal: false }) }
+  openSettingsModal = () => { this.setState({ structureModalOpen: true }) }
+  closeSettingsModal = () => { this.setState({ structureModalOpen: false }) }
 
-  openStructureMenu = () => { this.setState({ structureMenu: true }) }
-  closeStructureMenu = () => { this.setState({ structureMenu: false }) }
+  openStructureMenu = () => { this.setState({ structureMenuOpen: true }) }
+  closeStructureMenu = () => { this.setState({ structureMenuOpen: false }) }
 
   handleIntervalSliderChange = (val) => {this.setState({ interval: val })}
   handleColorChange = (val) => {this.setState({ color: val })}
@@ -90,6 +91,13 @@ class App extends React.Component {
   }
 
   cellIsPopulated = (r, c, grid) => { return (r >= 0 && c >= 0 && r < grid.length && c < grid[0].length && grid[r][c]) }
+
+  startPlaceStructure = (grid) => {
+    this.setState({
+      structureMenuOpen: false,
+      selectedStruct: grid
+    });
+  }
 
   resetGrid = () => {
     //let grid = Array(this.state.rows).fill(Array(this.state.cols).fill(false));
@@ -155,25 +163,27 @@ class App extends React.Component {
     });
 
     return (
-      <div className='app'>
+      <div className='app' onMouseMove={this.updateCursorXY}>
         <h1>Game of Life</h1>
         <Grid
-          interactive
+          interactive={!this.state.selectedStruct}
           grid={this.state.grid}
           toggleCellFunc={this.toggleCell}
           cellColor={this.state.color}
+          cellSize={this.cellSize}
+          shadowGrid={this.state.selectedStruct}
         />
         <p>Generation: {this.state.generation}</p>
 
         <div className='button-container'>
-          <Button primary icon onClick={this.toggleAutoPlay}><Icon name={this.state.playing ? 'pause' : 'play'} /></Button>
-          <Button onClick={this.play} disabled={this.state.playing}>Step</Button>
-          <Button icon onClick={this.openStructureMenu} disabled={this.state.playing}>
+          <Button primary icon onClick={this.toggleAutoPlay} disabled={this.state.selectedStruct}><Icon name={this.state.playing ? 'pause' : 'play'} /></Button>
+          <Button onClick={this.play} disabled={this.state.playing || this.state.selectedStruct}>Step</Button>
+          <Button icon onClick={this.openStructureMenu} disabled={this.state.playing || this.state.selectedStruct}>
             <Icon name='folder outline' />
           </Button>
-          <Button onClick={this.resetGrid} disabled={this.state.playing}>Reset Grid</Button>
-          <Button onClick={this.randomSeedGrid} disabled={this.state.playing}>Seed</Button>
-          <Button icon onClick={this.openSettingsModal} disabled={this.state.playing}>
+          <Button onClick={this.resetGrid} disabled={this.state.playing || this.state.selectedStruct}>Reset Grid</Button>
+          <Button onClick={this.randomSeedGrid} disabled={this.state.playing || this.state.selectedStruct}>Seed</Button>
+          <Button icon onClick={this.openSettingsModal} disabled={this.state.playing || this.state.selectedStruct}>
             <Icon name='setting' />
           </Button>
         </div>
@@ -181,7 +191,7 @@ class App extends React.Component {
         <Modal
           closeIcon
           onClose={this.closeSettingsModal}
-          open={this.state.settingsModal}
+          open={this.state.structureModalOpen}
         >
           <Modal.Header>Settings</Modal.Header>
           <Modal.Content>
@@ -204,9 +214,10 @@ class App extends React.Component {
         </Modal>
 
         <StructureMenu
-          open={this.state.structureMenu}
+          open={this.state.structureMenuOpen}
           stepFunc={this.step}
           closeFunc={this.closeStructureMenu}
+          placeStructFunc={this.startPlaceStructure}
         />
       </div>
     );

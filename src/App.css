@@ -16,3 +16,10 @@
 .button-container .button {
   margin: 0 10px;
 }
+
+.floating-struct {
+  display: none;
+  width: max-content;
+  position: fixed;
+  opacity: 60%;
+}

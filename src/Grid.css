@@ -1,5 +1,6 @@
 .grid {
   display: inline-block;
+  width: max-content;
   line-height: 0;
   border-collapse: collapse;
 }
