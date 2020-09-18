@@ -1,3 +1,3 @@
-###Game of Life
+### Game of Life
 
 Made with React.js
