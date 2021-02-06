@@ -18,14 +18,16 @@ class App extends React.Component {
     this.cellSize = '20px';
 
     this.state = {
+      // main grid
       rows: rows,
       cols: cols,
       grid: (new Array(rows)).fill().map(() => { return new Array(cols).fill(false) }),
       playing: false,
+      generation: 0,
+
       selectedStruct: null, // structure that is being placed
       interval: 500,
       color: '#242424',
-      generation: 0,
       structureModalOpen: false,
       structureMenuOpen: false
     }
@@ -76,6 +78,7 @@ class App extends React.Component {
     return newGrid;
   }
 
+  // returns the number of living cells neighbouring the cell at row r, column c in grid g
   nLiveNeighbours = (r, c, g) => {
     let count = 0;
     if (this.cellIsPopulated(r - 1, c - 1, g)) count++;
@@ -92,6 +95,7 @@ class App extends React.Component {
 
   cellIsPopulated = (r, c, grid) => { return (r >= 0 && c >= 0 && r < grid.length && c < grid[0].length && grid[r][c]) }
 
+  // close structure menu and select structure to place
   startPlaceStructure = (grid) => {
     this.setState({
       structureMenuOpen: false,
@@ -99,6 +103,7 @@ class App extends React.Component {
     });
   }
 
+  // clears the main grid
   resetGrid = () => {
     //let grid = Array(this.state.rows).fill(Array(this.state.cols).fill(false));
     let grid = (new Array(this.state.rows)).fill().map(() => { return new Array(this.state.cols).fill(false) });
@@ -109,6 +114,7 @@ class App extends React.Component {
     });
   }
 
+  // fills each cell in the main grid with a random on/off state
   randomSeedGrid = () => {
     let grid = (new Array(this.state.rows)).fill().map(() => { return new Array(this.state.cols).fill(false) });
 
@@ -138,6 +144,7 @@ class App extends React.Component {
   }
 
   render() {
+    // color options in settings
     let colors = [
       { name: 'Black', hex: '#242424' },
       { name: 'Red', hex: '#e60000' },
@@ -153,12 +160,12 @@ class App extends React.Component {
       return <ImageRadio
         small
         name='color'
-        key={i}
         solidColor={c.hex}
         value={c.hex}
         label={c.name}
         onClick={this.handleColorChange}
         checked={c.hex === this.state.color}
+        key={i}
       />
     });
 
@@ -166,6 +173,7 @@ class App extends React.Component {
       <div className='app' onMouseMove={this.updateCursorXY}>
         <h1>Game of Life</h1>
         <Grid
+          // grid is interactive unless a structure is being placed
           interactive={!this.state.selectedStruct}
           grid={this.state.grid}
           toggleCellFunc={this.toggleCell}
@@ -175,6 +183,7 @@ class App extends React.Component {
         />
         <p>Generation: {this.state.generation}</p>
 
+        {/* bottom action bar */}
         <div className='button-container'>
           <Button primary icon onClick={this.toggleAutoPlay} disabled={this.state.selectedStruct}><Icon name={this.state.playing ? 'pause' : 'play'} /></Button>
           <Button onClick={this.play} disabled={this.state.playing || this.state.selectedStruct}>Step</Button>
@@ -188,6 +197,7 @@ class App extends React.Component {
           </Button>
         </div>
 
+        {/* settings modal */}
         <Modal
           closeIcon
           onClose={this.closeSettingsModal}
@@ -213,6 +223,7 @@ class App extends React.Component {
           </Modal.Content>
         </Modal>
 
+        {/* structure menu */}
         <StructureMenu
           open={this.state.structureMenuOpen}
           stepFunc={this.step}

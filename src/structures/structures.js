@@ -1,3 +1,5 @@
+// provides preset structures in json format
+
 export const structures = [
   {
     "name": "Blinker",

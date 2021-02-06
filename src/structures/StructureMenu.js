@@ -5,33 +5,27 @@ import './StructureMenu.css';
 import { structures as data } from './structures';
 import Grid from './../Grid';
 
-// provide one unit of padding around the structure
-data.forEach(s => {
-  s.grid.forEach(row => {
-    row.unshift(false);
-    row.push(false);
-  });
-
-  let emptyRow = new Array(s.grid[0].length).fill(false);
-  s.grid.unshift(emptyRow);
-  s.grid.push(emptyRow);
-});
-
+/* StructureMenu displays the structure menu.
+ * 
+ * Props: * open: whether the menu is visible
+ *        * stepFunc: function to step a grid forward
+ *        * closeFunc: function to close the menu
+ *        * placeStructFunc: function to start placing a structure
+*/
 class StructureMenu extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selected: 0,
-      detailsOpen: false,
-      selectedGrid: data[0].grid,
-      generation: 0
+      selected: 0, // id of selected structure
+      detailsOpen: false, // details pane open?
+      selectedGrid: data[0].grid, // grid data for selected structure
+      generation: 0 // generation of the structure in the details pane
     }
   }
 
   // selects a new item to view in the details pane
   selectItem = (i) => {
-    //console.log('selecting ' + i)
     this.setState({
       selected: i,
       detailsOpen: true,
@@ -48,7 +42,23 @@ class StructureMenu extends React.Component {
     });
   }
 
+  componentDidMount = () => {
+
+    // provide one unit of padding around the structure
+    data.forEach(s => {
+      s.grid.forEach(row => {
+        row.unshift(false);
+        row.push(false);
+      });
+    
+      let emptyRow = new Array(s.grid[0].length).fill(false);
+      s.grid.unshift(emptyRow);
+      s.grid.push(emptyRow);
+    });
+  }
+
   render() {
+    // array of structures to display
     let structures = data.map((s, i) => {
       return <StructureItem
         key={i}
@@ -68,9 +78,12 @@ class StructureMenu extends React.Component {
         <Modal.Header>Structures</Modal.Header>
         <Modal.Content>
           <div id='modal-content'>
+            {/* main panel */}
             <div id='structure-list' className={!this.state.detailsOpen ? 'visible' : null}>
               {structures}
             </div>
+
+            {/* detail panel */}
             <div id='structure-details' className={this.state.detailsOpen ? 'visible' : null}>
               <div>
                 <h3>{data[this.state.selected].name}</h3>
@@ -108,6 +121,13 @@ class StructureMenu extends React.Component {
   }
 }
 
+/* StructureItem displays a single structure in the structure menu.
+ * 
+ * Props: * i: id of structure
+ *        * structure: structure data
+ *        * stepFunc: function to step a grid forward
+ *        * selectItemFunc: selects current grid to view in detail panel
+*/
 class StructureItem extends React.Component {
   constructor(props) {
     super(props);
@@ -122,7 +142,11 @@ class StructureItem extends React.Component {
 
   toggleHover = () => { this.setState({ hover: !this.state.hover }) }
 
-  play = () => { if (this.state.hover && this.props.structure.type !== 'spaceship') this.setState({ grid: this.props.stepFunc(this.state.grid) }) }
+  // steps the grid forward one
+  play = () => {
+    if (this.state.hover && this.props.structure.type !== 'spaceship')
+      this.setState({ grid: this.props.stepFunc(this.state.grid) })
+  }
 
   render() {
     // different cell sizes for different grid sizes
@@ -143,7 +167,6 @@ class StructureItem extends React.Component {
       >
         <p>{this.props.structure.name}</p>
         <Grid
-          padded
           grid={this.state.grid}
           cellColor='#616161'
           cellSize={cellSize}

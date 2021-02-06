@@ -1,6 +1,18 @@
 import React from 'react';
 import './ImageRadio.css';
 
+/* ImageRadio displays a custom radio with an image.
+ * 
+ * Props: * small/medium/large: image size
+ *        * name: radio name
+ *        * solidColor: fills image with a solid color
+ *        * value: radio value
+ *        * label: radio label
+ *        * onClick: handle radio click
+ *        * checked: checked
+ * 
+ * Notes: * checked should be store in the parent class' state.
+*/
 class ImageRadio extends React.Component {
   
   handleClick = () => {
@@ -9,6 +21,7 @@ class ImageRadio extends React.Component {
   }
 
   render() {
+    // set radio classes
     let classes = 'imageRadio';
     if (this.props.large) classes += ' large';
     else if (this.props.medium) classes += ' medium';
