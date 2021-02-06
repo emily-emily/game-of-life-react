@@ -77,7 +77,7 @@ class StructureMenu extends React.Component {
                 <p>Dimensions: {data[this.state.selected].dimensions[0]}x{data[this.state.selected].dimensions[1]}</p>
                 <p>Period: {data[this.state.selected].period}</p>
                 <p>Type: {data[this.state.selected].type}</p>
-                <Button icon labelPosition='left' onClick={() => this.props.placeStructFunc(this.state.selectedGrid)}>
+                <Button icon labelPosition='left' onClick={() => this.props.placeStructFunc(this.state.selectedGrid)} disabled>
                   Place this structure!
                   <Icon name='paint brush' />
                 </Button>
