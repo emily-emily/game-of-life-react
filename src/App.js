@@ -25,7 +25,7 @@ class App extends React.Component {
       playing: false,
       generation: 0,
 
-      selectedStruct: null, // structure that is being placed
+      selectedStructGrid: null, // grid of the structure that is being placed
       interval: 500,
       color: '#242424',
       structureModalOpen: false,
@@ -99,7 +99,7 @@ class App extends React.Component {
   startPlaceStructure = (grid) => {
     this.setState({
       structureMenuOpen: false,
-      selectedStruct: grid
+      selectedStructGrid: grid
     });
   }
 
@@ -128,7 +128,37 @@ class App extends React.Component {
       generation: 0
     });
   }
+  
+  // determines what happens when a cell is clicked
+  onCellClick = (id) => {
+    if (this.state.selectedStructGrid)
+      this.confirmPlaceStructure(id);
+    else
+      this.toggleCell(id);
+  }
 
+  // places the structure on the grid
+  confirmPlaceStructure = (id) => {
+    id = id.split('_');
+    let x = parseInt(id[0]);
+    let y = parseInt(id[1]);
+    let gridCopy = this.state.grid.map(function(arr) { return arr.slice(); });
+
+    for (let i = 0; i < this.state.selectedStructGrid.length; i++){
+      for (let j = 0; j < this.state.selectedStructGrid[0].length; j++){
+        if (x + i < gridCopy.length && y + j < gridCopy[0].length){
+          gridCopy[x + i][y + j] = this.state.selectedStructGrid[i][j];
+        }
+      }
+    }
+
+    this.setState({
+      grid: gridCopy,
+      selectedStructGrid: null
+    });
+  }
+
+  // turns a cell on or off based on its current status
   toggleCell = (id) => {
     if (!this.state.playing){
       id = id.split('_');
@@ -174,25 +204,31 @@ class App extends React.Component {
         <h1>Game of Life</h1>
         <Grid
           // grid is interactive unless a structure is being placed
-          interactive={!this.state.selectedStruct}
+          interactive
           grid={this.state.grid}
-          toggleCellFunc={this.toggleCell}
+          cellClickFunc={this.onCellClick}
           cellColor={this.state.color}
           cellSize={this.cellSize}
-          shadowGrid={this.state.selectedStruct}
+          shadowGrid={this.state.selectedStructGrid}
         />
         <p>Generation: {this.state.generation}</p>
 
         {/* bottom action bar */}
         <div className='button-container'>
-          <Button primary icon onClick={this.toggleAutoPlay} disabled={this.state.selectedStruct}><Icon name={this.state.playing ? 'pause' : 'play'} /></Button>
-          <Button onClick={this.play} disabled={this.state.playing || this.state.selectedStruct}>Step</Button>
-          <Button icon onClick={this.openStructureMenu} disabled={this.state.playing || this.state.selectedStruct}>
+          <Button
+            primary icon
+            onClick={this.toggleAutoPlay}
+            disabled={this.state.selectedStructGrid !== null}
+          >
+            <Icon name={this.state.playing ? 'pause' : 'play'} />
+          </Button>
+          <Button onClick={this.play} disabled={this.state.playing || this.state.selectedStructGrid !== null}>Step</Button>
+          <Button icon onClick={this.openStructureMenu} disabled={this.state.playing || this.state.selectedStructGrid !== null}>
             <Icon name='folder outline' />
           </Button>
-          <Button onClick={this.resetGrid} disabled={this.state.playing || this.state.selectedStruct}>Reset Grid</Button>
-          <Button onClick={this.randomSeedGrid} disabled={this.state.playing || this.state.selectedStruct}>Seed</Button>
-          <Button icon onClick={this.openSettingsModal} disabled={this.state.playing || this.state.selectedStruct}>
+          <Button onClick={this.resetGrid} disabled={this.state.playing || this.state.selectedStructGrid !== null}>Reset Grid</Button>
+          <Button onClick={this.randomSeedGrid} disabled={this.state.playing || this.state.selectedStructGrid !== null}>Seed</Button>
+          <Button icon onClick={this.openSettingsModal} disabled={this.state.playing || this.state.selectedStructGrid !== null}>
             <Icon name='setting' />
           </Button>
         </div>

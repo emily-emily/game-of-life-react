@@ -5,7 +5,7 @@ import './Grid.css';
  * 
  * Props: * interactive (bool): determines whether cells can be toggled
  *        * grid (matrix): grid data
- *        * toggleCellFunc: function to toggle a cell
+ *        * cellClickFunc(cellId): function on cell click
  *        * cellColor: hex cell color
  *        * cellSize: cell size in pixels
  *        * shadowGrid: grid of structure being placed
@@ -32,10 +32,11 @@ class Grid extends React.Component {
     if (this.props.grid){
       let gridCopy = this.props.grid.map(function(arr) { return arr.slice(); });
 
-      // add shadow
+      // add shadow of the grid that is being placed
       if (this.props.shadowGrid){
-        let x = parseInt(this.state.shadowLocation.substring(0, this.state.shadowLocation.indexOf('_')));
-        let y = parseInt(this.state.shadowLocation.substring(this.state.shadowLocation.indexOf('_') + 1));
+        let cellId = (this.state.shadowLocation.slice()).split('_');
+        let x = parseInt(cellId[0]);
+        let y = parseInt(cellId[1]);
   
         for (let i = 0; i < this.props.shadowGrid.length; i++){
           for (let j = 0; j < this.props.shadowGrid[0].length; j++){
@@ -58,7 +59,7 @@ class Grid extends React.Component {
                 key={r + '_' + c}
                 populated={val}
                 cellColor={this.props.cellColor}
-                toggleCellFunc={this.props.toggleCellFunc}
+                cellClickFunc={this.props.cellClickFunc}
                 onMouseEnter={this.handleMouseEnter}
               />;
             })
@@ -84,7 +85,7 @@ class Grid extends React.Component {
  *        * boxId: id of the box. Format: r_c
  *        * populated (bool): whether the cell is populated or not
  *        * cellColor: hex cell color
- *        * toggleCellFunc: function to toggle a cell
+ *        * cellClickFunc: function to call when a cell is clicked
  *        * onMouseEnter: function for mouse hover
 */
 class Cell extends React.Component {
@@ -100,7 +101,7 @@ class Cell extends React.Component {
       <td
         style={cellStyle}
         className={this.props.interactive ? 'interactive cell' : 'cell'}
-        onClick={() => {if (this.props.interactive) this.props.toggleCellFunc(this.props.boxId)}}
+        onClick={this.props.interactive ? () => {this.props.cellClickFunc(this.props.boxId)} : null}
         onMouseEnter={() => this.props.onMouseEnter(this.props.boxId)}
       />
     );
