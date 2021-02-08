@@ -146,8 +146,13 @@ class App extends React.Component {
 
     for (let i = 0; i < this.state.selectedStructGrid.length; i++){
       for (let j = 0; j < this.state.selectedStructGrid[0].length; j++){
+
+        // only structure within the grid is placed
         if (x + i < gridCopy.length && y + j < gridCopy[0].length){
-          gridCopy[x + i][y + j] = this.state.selectedStructGrid[i][j];
+          
+          // edit grid only if structure has a live cell at that position
+          if (this.state.selectedStructGrid[i][j])
+            gridCopy[x + i][y + j] = this.state.selectedStructGrid[i][j];
         }
       }
     }
@@ -171,6 +176,79 @@ class App extends React.Component {
   
       this.setState({ grid: grid });
     }
+  }
+
+  handleKeyup = (ev) => {
+    if (this.state.selectedStructGrid){
+      // escape: cancels structure placement
+      if (ev.keyCode === 27){
+        if (this.state.selectedStructGrid !== null)
+          this.setState({ selectedStructGrid: null });
+      }
+  
+      // f: flips structure
+      if (ev.keyCode === 70){
+        // f: horizontal flip
+        // shift-f: vertical flip
+        this.structureFlip(ev.shiftKey ? 1 : 0);
+      }
+
+      // a / left-arrow: rotates structure counter-clockwise
+      if (ev.keyCode === 65 || ev.keyCode === 37){
+        this.structureRotate(-1);
+      }
+
+      // d / right-arrow: rotates structure clockwise
+      if (ev.keyCode === 68 || ev.keyCode === 39){
+        this.structureRotate(1);
+      }
+    }
+  }
+
+  // flips the selected structure
+  // notes: dir = 0 flips horizontally
+  //        dir = 1 flips vertically
+  structureFlip = (dir) => {
+    let gridCopy = this.state.selectedStructGrid.map(function(arr) { return arr.slice(); });
+
+    // horizontal flip
+    if (dir === 0){
+      gridCopy.forEach(row => row.reverse());
+    }
+    // vertical flip
+    else if (dir === 1){
+      gridCopy.reverse();
+    }
+
+    this.setState({ selectedStructGrid: gridCopy });
+  }
+
+  // rotates the selected structure
+  // notes: if dir < 0 then structure will rotate counter-clockwise
+  //        if dir > 0 then structure will rotate clockwise
+  structureRotate = (dir) => {
+    let currGrid = this.state.selectedStructGrid;
+    // newGrid is currGrid reflected across the diagonal from the top left to the bottom right
+    //   the ith column in currGrid is the ith row in newGrid.
+    let newGrid = currGrid[0].map((col, i) => currGrid.map(row => row[i]));
+
+    // flip vertically for counter-clockwise rotation
+    if (dir < 0)
+      newGrid.reverse();
+    // flip horizontally for clockwise rotation
+    else if (dir > 0)
+      newGrid.forEach(row => row.reverse());
+
+    // update grid
+    this.setState({ selectedStructGrid: newGrid });
+  }
+
+  componentDidMount = () => {
+    document.addEventListener('keyup', this.handleKeyup, false);
+  }
+
+  componentWillUnmount = () => {
+    document.removeEventListener('keyup', this.handleKeyup, false);
   }
 
   render() {

@@ -42,15 +42,34 @@ class StructureMenu extends React.Component {
     });
   }
 
+  // returns the grid without the padding around the structure
+  removePadding = (grid) => {
+    let gridCopy = grid.map(function(arr) { return arr.slice(); });
+
+    // remove empty first and last rows
+    gridCopy.shift();
+    gridCopy.pop();
+
+    // remove empty units at the beginning and end of each row
+    gridCopy.forEach(row => {
+      row.shift();
+      row.pop();
+    });
+
+    return gridCopy;
+  }
+
   componentDidMount = () => {
 
     // provide one unit of padding around the structure
     data.forEach(s => {
+      // add one empty unit at the beginning and end of each row
       s.grid.forEach(row => {
         row.unshift(false);
         row.push(false);
       });
     
+      // add empty first and last rows
       let emptyRow = new Array(s.grid[0].length).fill(false);
       s.grid.unshift(emptyRow);
       s.grid.push(emptyRow);
@@ -90,7 +109,10 @@ class StructureMenu extends React.Component {
                 <p>Dimensions: {data[this.state.selected].dimensions[0]}x{data[this.state.selected].dimensions[1]}</p>
                 <p>Period: {data[this.state.selected].period}</p>
                 <p>Type: {data[this.state.selected].type}</p>
-                <Button icon labelPosition='left' onClick={() => this.props.placeStructFunc(this.state.selectedGrid)}>
+                <Button icon
+                  labelPosition='left'
+                  onClick={() => this.props.placeStructFunc(this.removePadding(this.state.selectedGrid))}
+                >
                   Place this structure!
                   <Icon name='paint brush' />
                 </Button>

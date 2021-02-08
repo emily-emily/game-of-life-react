@@ -1,4 +1,7 @@
 // provides preset structures in json format
+// grid: 0 -> empty cell
+//       1 -> live cell
+//       2 -> shadow (used in structure placement)
 
 export const structures = [
   {

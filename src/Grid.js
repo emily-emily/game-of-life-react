@@ -40,8 +40,13 @@ class Grid extends React.Component {
   
         for (let i = 0; i < this.props.shadowGrid.length; i++){
           for (let j = 0; j < this.props.shadowGrid[0].length; j++){
+
+            // only structure within the grid is shadowed
             if (x + i < this.props.grid.length && y + j < this.props.grid[0].length){
-              gridCopy[x + i][y + j] = this.props.shadowGrid[i][j];
+
+              // add shadow where structure is live
+              if (this.props.shadowGrid[i][j])
+                gridCopy[x + i][y + j] = 2;
             }
           }
         }
@@ -57,7 +62,7 @@ class Grid extends React.Component {
                 cellSize={this.props.cellSize}
                 boxId={r + '_' + c}
                 key={r + '_' + c}
-                populated={val}
+                value={val}
                 cellColor={this.props.cellColor}
                 cellClickFunc={this.props.cellClickFunc}
                 onMouseEnter={this.handleMouseEnter}
@@ -83,7 +88,7 @@ class Grid extends React.Component {
  * Props: * interactive (bool): determines whether the cell can be toggled
  *        * cellSize: cell size in pixels
  *        * boxId: id of the box. Format: r_c
- *        * populated (bool): whether the cell is populated or not
+ *        * value: value of the cell (0 (empty), 1 (live) or 2 (shadow))
  *        * cellColor: hex cell color
  *        * cellClickFunc: function to call when a cell is clicked
  *        * onMouseEnter: function for mouse hover
@@ -92,10 +97,15 @@ class Cell extends React.Component {
 
   render() {
     let cellStyle = {
-      backgroundColor: this.props.populated ? this.props.cellColor : undefined,
+      backgroundColor: null,
       height: this.props.cellSize ? this.props.cellSize : '20px',
       width: this.props.cellSize ? this.props.cellSize : '20px'
     }
+
+    if (this.props.value === 1 || this.props.value === true)
+      cellStyle.backgroundColor = this.props.cellColor;
+    else if (this.props.value === 2)
+      cellStyle.backgroundColor = '#ababab';
 
     return (
       <td
