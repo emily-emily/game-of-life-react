@@ -11,23 +11,22 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    let rows = 28;
-    let cols = 40;
+    // initial number of rows/cols. Will be updated in componentDidMount()
+    let initialRows = 5;
+    let initialCols = 5;
 
-    this.timer = null;
-    this.cellSize = '20px';
+    this.timer = null; // timer for auto-playing
+    this.cellSize = 20; // cell size in px
 
     this.state = {
       // main grid
-      rows: rows,
-      cols: cols,
-      grid: (new Array(rows)).fill().map(() => { return new Array(cols).fill(false) }),
+      grid: (new Array(initialRows)).fill().map(() => { return new Array(initialCols).fill(0) }),
       playing: false,
       generation: 0,
 
       selectedStructGrid: null, // grid of the structure that is being placed
-      interval: 500,
-      color: '#242424',
+      interval: 500, // auto-play interval in ms
+      color: '#242424', // default cell color
       structureModalOpen: false,
       structureMenuOpen: false
     }
@@ -68,10 +67,10 @@ class App extends React.Component {
         let neighours = this.nLiveNeighbours(r, c, grid);
         if (this.cellIsPopulated(r, c, grid)){
           // a cell dies if there are less than 2 or more than 3 neighbours
-          if (neighours < 2 || neighours > 3) newGrid[r][c] = false;
+          if (neighours < 2 || neighours > 3) newGrid[r][c] = 0;
         }
         // an empty cell becomes a live cell if there are exactly 3 neighbours
-        else if (neighours === 3) newGrid[r][c] = true;
+        else if (neighours === 3) newGrid[r][c] = 1;
       }
     }
 
@@ -105,8 +104,9 @@ class App extends React.Component {
 
   // clears the main grid
   resetGrid = () => {
-    //let grid = Array(this.state.rows).fill(Array(this.state.cols).fill(false));
-    let grid = (new Array(this.state.rows)).fill().map(() => { return new Array(this.state.cols).fill(false) });
+    let rows = this.state.grid.length;
+    let cols = this.state.grid[0].length;
+    let grid = (new Array(rows)).fill().map(() => { return new Array(cols).fill(0) });
     
     this.setState({
       grid: grid,
@@ -116,12 +116,14 @@ class App extends React.Component {
 
   // fills each cell in the main grid with a random on/off state
   randomSeedGrid = () => {
-    let grid = (new Array(this.state.rows)).fill().map(() => { return new Array(this.state.cols).fill(false) });
+    let rows = this.state.grid.length;
+    let cols = this.state.grid[0].length;
+    let grid = (new Array(rows)).fill().map(() => { return new Array(cols).fill(0) });
 
-    for (let i = 0; i < this.state.rows; i++)
-      for (let j = 0; j < this.state.cols; j++)
+    for (let i = 0; i < rows; i++)
+      for (let j = 0; j < cols; j++)
         if (Math.floor(Math.random() * 5) === 1)
-          grid[i][j] = true;
+          grid[i][j] = 1;
     
     this.setState({
       grid: grid,
@@ -242,13 +244,63 @@ class App extends React.Component {
     // update grid
     this.setState({ selectedStructGrid: newGrid });
   }
+  
+  handleResize = (ev) => {
+    this.resizeGrid();
+  }
+
+  // resizes the grid to match the device
+  resizeGrid = () => {
+    let deviceW = window.innerWidth;
+    let deviceH = window.innerHeight;
+
+    // new width and height of grid in cells
+    let newW = parseInt((deviceW * 0.8) / this.cellSize);
+    let newH = parseInt((deviceH - 200) / this.cellSize);
+    
+    let gridCopy = this.state.grid.map(function(arr) { return arr.slice(); });
+
+    // pop elements from each row until the new width is satisfied
+    if (newW < gridCopy[0].length){
+      gridCopy.forEach(row => {
+        while (row.length > newW)
+          row.pop();
+      });
+    }
+    // append 0s to each row until the new width is satisfied
+    else if (newW > gridCopy[0].length){
+      gridCopy.forEach(row => {
+        while (row.length < newW)
+          row.push(0);
+      });
+    }
+
+    // pop rows until the new height is satisfied
+    if (newH < gridCopy.length){
+      while (gridCopy.length > newH)
+        gridCopy.pop();
+    }
+    // append empty rows until the new width is satisfied
+    else if (newH > gridCopy.length) {
+      let emptyRow = new Array(gridCopy[0].length).fill(0);
+      while (gridCopy.length < newH)
+        gridCopy.push(emptyRow);
+    }
+
+    this.setState({ grid: gridCopy });
+  }
 
   componentDidMount = () => {
     document.addEventListener('keyup', this.handleKeyup, false);
+    window.addEventListener('resize', this.handleResize, false);
+
+    // resize grid to fit device
+    this.resizeGrid();
   }
 
   componentWillUnmount = () => {
     document.removeEventListener('keyup', this.handleKeyup, false);
+    window.removeEventListener('resize', this.handleResize, false);
   }
 
   render() {
@@ -279,7 +331,7 @@ class App extends React.Component {
 
     return (
       <div className='app' onMouseMove={this.updateCursorXY}>
-        <h1>Game of Life</h1>
+        <div className='title'>Game of Life</div>
         <Grid
           // grid is interactive unless a structure is being placed
           interactive

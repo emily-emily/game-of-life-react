@@ -98,8 +98,8 @@ class Cell extends React.Component {
   render() {
     let cellStyle = {
       backgroundColor: null,
-      height: this.props.cellSize ? this.props.cellSize : '20px',
-      width: this.props.cellSize ? this.props.cellSize : '20px'
+      height: this.props.cellSize ? this.props.cellSize + 'px' : '20px',
+      width: this.props.cellSize ? this.props.cellSize + 'px' : '20px'
     }
 
     if (this.props.value === 1 || this.props.value === true)
