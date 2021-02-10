@@ -6,6 +6,7 @@ import './Grid.css';
  * Props: * interactive (bool): determines whether cells can be toggled
  *        * grid (matrix): grid data
  *        * cellClickFunc(cellId): function on cell click
+ *        * cellDragFunc(cellId): function on cell drag
  *        * cellColor: hex cell color
  *        * cellSize: cell size in pixels
  *        * shadowGrid: grid of structure being placed
@@ -14,14 +15,17 @@ class Grid extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      // shadow cell on mouse hover
+      // move structure shadow to mouse
       shadowLocation: '0_0'
     };
   }
   
   // set shadow to cell
   handleMouseEnter = (id) => {
-    this.setState({ shadowLocation: id });
+    if (this.props.placingStruct)
+      this.setState({ shadowLocation: id });
+    else if (this.props.interactive)
+      this.props.cellDragFunc(id, "mouseenter");
   }
 
   render() {
@@ -59,12 +63,14 @@ class Grid extends React.Component {
             row.map((val, c) => {
               return <Cell
                 interactive={this.props.interactive}
+                placingStruct={this.props.placingStruct}
                 cellSize={this.props.cellSize}
                 boxId={r + '_' + c}
                 key={r + '_' + c}
                 value={val}
                 cellColor={this.props.cellColor}
                 cellClickFunc={this.props.cellClickFunc}
+                cellDragFunc={this.props.cellDragFunc}
                 onMouseEnter={this.handleMouseEnter}
               />;
             })
@@ -74,7 +80,7 @@ class Grid extends React.Component {
     }
 
     return (
-      <table className='grid'>
+      <table className='grid' onContextMenu={() => false}>
         <tbody>
           { gridTable }
         </tbody>
@@ -111,8 +117,14 @@ class Cell extends React.Component {
       <td
         style={cellStyle}
         className={this.props.interactive ? 'interactive cell' : 'cell'}
-        onClick={this.props.interactive ? () => {this.props.cellClickFunc(this.props.boxId)} : null}
-        onMouseEnter={this.props.interactive ? () => this.props.onMouseEnter(this.props.boxId) : null}
+        onClick={this.props.interactive || this.props.placingStruct ? () => {this.props.cellClickFunc(this.props.boxId)} : null}
+        onMouseEnter={() => this.props.onMouseEnter(this.props.boxId)}
+        onMouseDown={(ev) => {
+          if (this.props.interactive){
+            ev.preventDefault();
+            this.props.cellDragFunc(this.props.boxId, "mousedown");
+          }
+        }}
       />
     );
   }

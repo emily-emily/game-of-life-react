@@ -32,7 +32,6 @@ class StructureMenu extends React.Component {
       selectedGrid: data[i].grid,
       generation: 0
     });
-    console.log(data[i].grid);
   }
 
   // steps a grid forward
@@ -66,12 +65,12 @@ class StructureMenu extends React.Component {
     data.forEach(s => {
       // add one empty unit at the beginning and end of each row
       s.grid.forEach(row => {
-        row.unshift(false);
-        row.push(false);
+        row.unshift(0);
+        row.push(0);
       });
     
       // add empty first and last rows
-      let emptyRow = new Array(s.grid[0].length).fill(false);
+      let emptyRow = new Array(s.grid[0].length).fill(0);
       s.grid.unshift(emptyRow);
       s.grid.push(emptyRow);
     });

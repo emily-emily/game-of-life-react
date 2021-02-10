@@ -17,6 +17,9 @@ class App extends React.Component {
     this.timer = null; // timer for auto-playing
     this.cellSize = 20; // cell size in px
 
+    this.mouseButton = -1;
+    this.startedDrag = null;
+
     this.state = {
       // main grid
       grid: (new Array(initialRows)).fill().map(() => { return new Array(initialCols).fill(0) }),
@@ -147,8 +150,20 @@ class App extends React.Component {
   onCellClick = (id) => {
     if (this.state.selectedStructGrid)
       this.confirmPlaceStructure(id);
-    else
-      this.toggleCell(id);
+  }
+
+  // determines what happens when the mouse drags across the grid
+  // evtype: "mouseenter" or "mousedown"
+  onCellDrag = (id, evtype) => {
+    if (this.mouseButton === 0)
+      this.drawCell(id, 1);
+    else if (this.mouseButton === 2)
+      this.drawCell(id, 0);
+
+    // mouse button has not yet been updated; store id in variable to access when it is updated
+    else if (!this.startedDrag && evtype === "mousedown") {
+      this.startedDrag = id;
+    }
   }
 
   // places the structure on the grid
@@ -177,16 +192,16 @@ class App extends React.Component {
     });
   }
 
-  // turns a cell on or off based on its current status
-  toggleCell = (id) => {
+  // updates a cell with a new value
+  drawCell = (id, val) => {
     if (!this.state.playing){
       id = id.split('_');
       let r = id[0];
       let c = id[1];
   
-      let grid = this.state.grid.slice();
+      let grid = this.state.grid.map(function(arr) { return arr.slice(); });
   
-      grid[r][c] = !grid[r][c];
+      grid[r][c] = val;
   
       this.setState({ grid: grid });
     }
@@ -322,9 +337,36 @@ class App extends React.Component {
     this.setState({ grid: gridCopy });
   }
 
+  handleMouseDown = (ev) => {
+    this.mouseButton = ev.button;
+
+    // mouse button is updated after event fires. Call function to draw on the first cell
+    if (this.startedDrag){
+      // draw appropriate value to cell
+      if (this.mouseButton === 0)
+        this.drawCell(this.startedDrag, 1);
+      else if (this.mouseButton === 2)
+        this.drawCell(this.startedDrag, 0);
+      
+      // reset variable
+      this.startedDrag = null;
+    }
+  }
+
+  handleMouseUp = (ev) => { this.mouseButton = -1 }
+  
+  handleContextMenu = (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    return false;
+  }
+
   componentDidMount = () => {
     document.addEventListener('keyup', this.handleKeyup, false);
+    document.addEventListener('mousedown', this.handleMouseDown, false);
+    document.addEventListener('mouseup', this.handleMouseUp, false);
     window.addEventListener('resize', this.handleResize, false);
+    document.addEventListener('contextmenu', this.handleContextMenu, false);
 
     // resize grid to fit device
     this.resizeGrid();
@@ -332,7 +374,10 @@ class App extends React.Component {
 
   componentWillUnmount = () => {
     document.removeEventListener('keyup', this.handleKeyup, false);
+    document.removeEventListener('mousedown', this.handleMouseDown, false);
+    document.removeEventListener('mouseup', this.handleMouseUp, false);
     window.removeEventListener('resize', this.handleResize, false);
+    document.removeEventListener('contextmenu', this.handleContextMenu , false);
   }
 
   render() {
@@ -340,10 +385,12 @@ class App extends React.Component {
       <div className='app' onMouseMove={this.updateCursorXY}>
         <div className='title'>Game of Life</div>
         <Grid
-          // grid is interactive unless autoplaying
-          interactive={ !this.state.playing}
+          // grid is interactive unless autoplaying or placing structure
+          interactive={!this.state.playing && !this.state.selectedStructGrid}
+          placingStruct={this.state.selectedStructGrid != null}
           grid={this.state.grid}
           cellClickFunc={this.onCellClick}
+          cellDragFunc={this.onCellDrag}
           cellColor={this.state.settings.color}
           cellSize={this.cellSize}
           shadowGrid={this.state.selectedStructGrid}
