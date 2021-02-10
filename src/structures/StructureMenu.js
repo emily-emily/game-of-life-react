@@ -32,6 +32,7 @@ class StructureMenu extends React.Component {
       selectedGrid: data[i].grid,
       generation: 0
     });
+    console.log(data[i].grid);
   }
 
   // steps a grid forward
@@ -121,6 +122,7 @@ class StructureMenu extends React.Component {
               <div id='structure-grid'>
                 <Grid
                   grid={this.state.selectedGrid}
+                  cellSize={300 / Math.max(this.state.selectedGrid.length, this.state.selectedGrid[0].length)}
                   cellColor={'#616161'}
                 />
                 <p>Generation {this.state.generation}</p>
@@ -173,13 +175,7 @@ class StructureItem extends React.Component {
   render() {
     // different cell sizes for different grid sizes
     let gridSize = Math.max(this.state.grid.length, this.state.grid[0].length);
-    let cellSize;
-
-    if (gridSize <= 5) cellSize = 20;
-    else if (gridSize <= 10) cellSize = 17;
-    else if (gridSize <= 15) cellSize = 13;
-    else if (gridSize <= 25) cellSize = 10;
-    else cellSize = 5;
+    let cellSize = (150 / gridSize);
 
     return (
       <div

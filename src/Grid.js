@@ -112,7 +112,7 @@ class Cell extends React.Component {
         style={cellStyle}
         className={this.props.interactive ? 'interactive cell' : 'cell'}
         onClick={this.props.interactive ? () => {this.props.cellClickFunc(this.props.boxId)} : null}
-        onMouseEnter={() => this.props.onMouseEnter(this.props.boxId)}
+        onMouseEnter={this.props.interactive ? () => this.props.onMouseEnter(this.props.boxId) : null}
       />
     );
   }

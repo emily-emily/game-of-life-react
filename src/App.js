@@ -284,6 +284,10 @@ class App extends React.Component {
     // width and height must be at least 5
     if (newW < 5) newW = 5;
     if (newH < 5) newH = 5;
+
+    // cap width and height at 64 and 32
+    if (newW > 64) newW = 64;
+    if (newH > 32) newH = 32;
     
     let gridCopy = this.state.grid.map(function(arr) { return arr.slice(); });
 
@@ -336,8 +340,8 @@ class App extends React.Component {
       <div className='app' onMouseMove={this.updateCursorXY}>
         <div className='title'>Game of Life</div>
         <Grid
-          // grid is interactive unless a structure is being placed
-          interactive
+          // grid is interactive unless autoplaying
+          interactive={ !this.state.playing}
           grid={this.state.grid}
           cellClickFunc={this.onCellClick}
           cellColor={this.state.settings.color}
