@@ -13,7 +13,7 @@
 
   flex-wrap: wrap;
 
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 #structure-list.visible {
   transform: translateX(0);

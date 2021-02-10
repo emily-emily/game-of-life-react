@@ -172,13 +172,14 @@ class StructureItem extends React.Component {
 
   render() {
     // different cell sizes for different grid sizes
-    let gridSize = this.state.grid.length;
+    let gridSize = Math.max(this.state.grid.length, this.state.grid[0].length);
     let cellSize;
 
     if (gridSize <= 5) cellSize = 20;
     else if (gridSize <= 10) cellSize = 17;
     else if (gridSize <= 15) cellSize = 13;
-    else cellSize = 10;
+    else if (gridSize <= 25) cellSize = 10;
+    else cellSize = 5;
 
     return (
       <div

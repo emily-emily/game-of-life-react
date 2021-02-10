@@ -29,9 +29,7 @@
   margin: 5px 10px;
 }
 
-.floating-struct {
-  display: none;
-  width: max-content;
-  position: fixed;
-  opacity: 60%;
+#help-content {
+  max-height: 60vh;
+  overflow-y: auto;
 }

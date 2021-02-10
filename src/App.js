@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import  { Button, Icon } from 'semantic-ui-react';
+import  { Button, Icon, Modal, Table } from 'semantic-ui-react';
 
 import Grid from './Grid';
 import Settings from './Settings';
@@ -28,9 +28,16 @@ class App extends React.Component {
         color: '#242424', // default cell color
       },
 
-      selectedStructGrid: null, // grid of the structure that is being placed
+      // grid of the structure that is being placed
+      selectedStructGrid: null,
+
+      // modals
       settingsModalOpen: false,
-      structureMenuOpen: false
+      structureMenuOpen: false,
+      helpModalOpen: false,
+
+      // shows help modal (keyboard shortcuts) for large devices only
+      helpEnabled: false
     }
   }
 
@@ -45,6 +52,9 @@ class App extends React.Component {
 
   openStructureMenu = () => { this.setState({ structureMenuOpen: true }) }
   closeStructureMenu = () => { this.setState({ structureMenuOpen: false }) }
+
+  openHelpModal = () => { this.setState({ helpModalOpen: true }) }
+  closeHelpModal = () => { this.setState({ helpModalOpen: false }) }
 
   updateSettings = (newSettings) => {
     this.setState({ settings: newSettings });
@@ -249,6 +259,17 @@ class App extends React.Component {
   
   handleResize = (ev) => {
     this.resizeGrid();
+
+    let deviceW = window.innerWidth;
+    if (deviceW < 700 && this.state.helpEnabled){
+      this.setState({
+        helpModalOpen: false,
+        helpEnabled: false
+      });
+    }
+    else if (deviceW >= 700 && !this.state.helpEnabled){
+      this.setState({ helpEnabled: true });
+    }
   }
 
   // resizes the grid to match the device
@@ -259,8 +280,25 @@ class App extends React.Component {
     // new width and height of grid in cells
     let newW = parseInt((deviceW * 0.8) / this.cellSize);
     let newH = parseInt((deviceH - 200) / this.cellSize);
+
+    // width and height must be at least 5
+    if (newW < 5) newW = 5;
+    if (newH < 5) newH = 5;
     
     let gridCopy = this.state.grid.map(function(arr) { return arr.slice(); });
+
+    // pop rows until the new height is satisfied
+    if (newH < gridCopy.length){
+      while (gridCopy.length > newH)
+        gridCopy.pop();
+    }
+    // append empty rows until the new width is satisfied
+    else if (newH > gridCopy.length) {
+      while (gridCopy.length < newH){
+        let emptyRow = new Array(gridCopy[0].length).fill(0);
+        gridCopy.push(emptyRow);
+      }
+    }
 
     // pop elements from each row until the new width is satisfied
     if (newW < gridCopy[0].length){
@@ -275,19 +313,6 @@ class App extends React.Component {
         while (row.length < newW)
           row.push(0);
       });
-    }
-
-    // pop rows until the new height is satisfied
-    if (newH < gridCopy.length){
-      while (gridCopy.length > newH)
-        gridCopy.pop();
-    }
-    // append empty rows until the new width is satisfied
-    else if (newH > gridCopy.length) {
-      while (gridCopy.length < newH){
-        let emptyRow = new Array(gridCopy[0].length).fill(0);
-        gridCopy.push(emptyRow);
-      }
     }
 
     this.setState({ grid: gridCopy });
@@ -339,6 +364,14 @@ class App extends React.Component {
           <Button icon onClick={this.openSettingsModal} disabled={this.state.playing || this.state.selectedStructGrid !== null}>
             <Icon name='setting' />
           </Button>
+          {
+            this.state.helpEnabled
+            ? <Button icon onClick={this.openHelpModal} disabled={this.state.playing || this.state.selectedStructGrid !== null}>
+                <Icon name='question' />
+              </Button>
+            : null
+          }
+          
         </div>
 
         {/* settings modal */}
@@ -356,8 +389,63 @@ class App extends React.Component {
           closeFunc={this.closeStructureMenu}
           placeStructFunc={this.startPlaceStructure}
         />
+
+        {/* help modal */}
+        <HelpModal
+          open={this.state.helpModalOpen}
+          closeFunc={this.closeHelpModal}
+        />
       </div>
     );
+  }
+}
+
+class HelpModal extends React.Component {
+  render(){
+    return (
+      <Modal
+        closeIcon
+        onClose={this.props.closeFunc}
+        open={this.props.open}
+      >
+        <Modal.Header>Help</Modal.Header>
+        <Modal.Content>
+          <div id='help-content'>
+            <Table celled>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Key</Table.HeaderCell>
+                  <Table.HeaderCell>Action</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+
+              <Table.Body>
+                <Table.Row>
+                  <Table.Cell>esc</Table.Cell>
+                  <Table.Cell>Cancel structure placement</Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.Cell>f</Table.Cell>
+                  <Table.Cell>Flip structure horizontally</Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.Cell>shift f</Table.Cell>
+                  <Table.Cell>Flip structure vertically</Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.Cell>a / left-arrow</Table.Cell>
+                  <Table.Cell>Rotate structure counter-clockwise</Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.Cell>d / right-arrow</Table.Cell>
+                  <Table.Cell>Rotate structure clockwise</Table.Cell>
+                </Table.Row>
+              </Table.Body>
+            </Table>
+          </div>
+        </Modal.Content>
+      </Modal>
+    )
   }
 }
 
