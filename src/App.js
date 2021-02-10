@@ -1,10 +1,9 @@
 import React from 'react';
 import './App.css';
-import  { Button, Icon, Modal } from 'semantic-ui-react';
-import { Slider } from 'react-semantic-ui-range';
+import  { Button, Icon } from 'semantic-ui-react';
 
 import Grid from './Grid';
-import ImageRadio from './ImageRadio';
+import Settings from './Settings';
 import StructureMenu from './structures/StructureMenu';
 
 class App extends React.Component {
@@ -24,28 +23,32 @@ class App extends React.Component {
       playing: false,
       generation: 0,
 
+      settings: {
+        interval: 500, // auto-play interval in ms
+        color: '#242424', // default cell color
+      },
+
       selectedStructGrid: null, // grid of the structure that is being placed
-      interval: 500, // auto-play interval in ms
-      color: '#242424', // default cell color
-      structureModalOpen: false,
+      settingsModalOpen: false,
       structureMenuOpen: false
     }
   }
 
   toggleAutoPlay = () => {
     if (this.state.playing){ clearInterval(this.timer) }
-    else { this.timer = setInterval(this.play, this.state.interval) }
+    else { this.timer = setInterval(this.play, this.state.settings.interval) }
     this.setState({ playing: !this.state.playing });
   }
 
-  openSettingsModal = () => { this.setState({ structureModalOpen: true }) }
-  closeSettingsModal = () => { this.setState({ structureModalOpen: false }) }
+  openSettingsModal = () => { this.setState({ settingsModalOpen: true }) }
+  closeSettingsModal = () => {console.log("close"); this.setState({ settingsModalOpen: false }) }
 
   openStructureMenu = () => { this.setState({ structureMenuOpen: true }) }
   closeStructureMenu = () => { this.setState({ structureMenuOpen: false }) }
 
-  handleIntervalSliderChange = (val) => {this.setState({ interval: val })}
-  handleColorChange = (val) => {this.setState({ color: val })}
+  updateSettings = (newSettings) => {
+    this.setState({ settings: newSettings });
+  }
 
   // steps one generation on the main grid
   play = () => {
@@ -304,31 +307,6 @@ class App extends React.Component {
   }
 
   render() {
-    // color options in settings
-    let colors = [
-      { name: 'Black', hex: '#242424' },
-      { name: 'Red', hex: '#e60000' },
-      { name: 'Orange', hex: '#ebab34' },
-      { name: 'Yellow', hex: '#f0e446' },
-      { name: 'Green', hex: '#1dc223' },
-      { name: 'Blue', hex: '#1555c2' },
-      { name: 'Purple', hex: '#9715c2' },
-      { name: 'Pink', hex: '#f760e3' }
-    ];
-
-    let colorOptions = colors.map((c, i) => {
-      return <ImageRadio
-        small
-        name='color'
-        solidColor={c.hex}
-        value={c.hex}
-        label={c.name}
-        onClick={this.handleColorChange}
-        checked={c.hex === this.state.color}
-        key={i}
-      />
-    });
-
     return (
       <div className='app' onMouseMove={this.updateCursorXY}>
         <div className='title'>Game of Life</div>
@@ -337,7 +315,7 @@ class App extends React.Component {
           interactive
           grid={this.state.grid}
           cellClickFunc={this.onCellClick}
-          cellColor={this.state.color}
+          cellColor={this.state.settings.color}
           cellSize={this.cellSize}
           shadowGrid={this.state.selectedStructGrid}
         />
@@ -364,30 +342,12 @@ class App extends React.Component {
         </div>
 
         {/* settings modal */}
-        <Modal
-          closeIcon
-          onClose={this.closeSettingsModal}
-          open={this.state.structureModalOpen}
-        >
-          <Modal.Header>Settings</Modal.Header>
-          <Modal.Content>
-            <label>Play Speed</label>
-            <Slider
-              discrete 
-              color='blue'
-              settings={{
-                start: 1000/this.state.interval,
-                min: 1,
-                max: 5,
-                step: 1,
-                onChange: value => this.handleIntervalSliderChange(1000/value)
-              }}
-            />
-
-            <label>Color</label><br />
-            {colorOptions}
-          </Modal.Content>
-        </Modal>
+        <Settings
+          settings={this.state.settings}
+          open={this.state.settingsModalOpen}
+          updateSettingsFunc={this.updateSettings}
+          closeFunc={this.closeSettingsModal}
+        />
 
         {/* structure menu */}
         <StructureMenu

@@ -1,0 +1,8 @@
+.settings-item {
+  padding: 20px 0;
+}
+
+.settings-item:not(:first-child) {
+  margin-top: 10px;
+  border-top: 1px solid #e6e6e6;
+}

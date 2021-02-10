@@ -12,6 +12,9 @@
   width: 100%;
   opacity: 0;
 }
+.imageRadioWrapper>input[type=radio]:hover {
+  cursor: pointer;
+}
 
 .imageRadio {
   padding: 10px;
@@ -19,15 +22,9 @@
   border-radius: 10px;
   box-shadow: rgb(212, 212, 212) 0 0 5px;
 }
-
 .imageRadio.small {
   width: 60px;
   height: 70px;
-}
-
-.imageRadio:hover {
-  box-shadow: rgb(196, 196, 196) 0 0 5px;
-  cursor: pointer;
 }
 
 .imageRadioWrapper>input[type=radio]:checked + div {
@@ -49,4 +46,8 @@
   border-radius: 10px;
   background-color: lightpink;
   z-index: -1;
+}
+
+.imageRadio>.imageRadioLabel {
+  font-size: 12px;
 }

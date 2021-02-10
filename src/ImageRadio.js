@@ -32,7 +32,7 @@ class ImageRadio extends React.Component {
     else if (this.props.solidColor) content = <div className='imageRadioContent' style={{backgroundColor: this.props.solidColor}} />
 
     let label;
-    if (this.props.label) label=<p>{this.props.label}</p>
+    if (this.props.label) label=<p className='imageRadioLabel'>{this.props.label}</p>
     return(
       <div className='imageRadioWrapper'>
         <input
