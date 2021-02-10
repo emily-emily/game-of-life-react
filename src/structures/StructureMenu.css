@@ -12,6 +12,11 @@
   transition-duration: .5s;
 
   flex-wrap: wrap;
+
+  overflow-y: scroll;
+}
+#structure-list.visible {
+  transform: translateX(0);
 }
 
 .structure-item {
@@ -24,10 +29,6 @@
   cursor: pointer;
 }
 
-#structure-list.visible {
-  transform: translateX(0);
-}
-
 #structure-details {
   display: inline-flex;
   justify-content: space-between;
@@ -38,7 +39,6 @@
 
   transition-duration: .5s;
 }
-
 #structure-details.visible {
   transform: translateX(-100%);
 }

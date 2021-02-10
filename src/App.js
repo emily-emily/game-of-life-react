@@ -88,7 +88,6 @@ class App extends React.Component {
     if (this.cellIsPopulated(r + 1, c - 1, g)) count++;
     if (this.cellIsPopulated(r + 1, c, g)) count++;
     if (this.cellIsPopulated(r + 1, c + 1, g)) count++;
-    // console.log(count)
     return count;
   }
 
@@ -282,9 +281,10 @@ class App extends React.Component {
     }
     // append empty rows until the new width is satisfied
     else if (newH > gridCopy.length) {
-      let emptyRow = new Array(gridCopy[0].length).fill(0);
-      while (gridCopy.length < newH)
+      while (gridCopy.length < newH){
+        let emptyRow = new Array(gridCopy[0].length).fill(0);
         gridCopy.push(emptyRow);
+      }
     }
 
     this.setState({ grid: gridCopy });
