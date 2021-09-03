@@ -6,6 +6,8 @@ import Grid from './Grid';
 import Settings from './Settings';
 import StructureMenu from './structures/StructureMenu';
 
+const deviceBreakpoint = 700;
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -40,7 +42,7 @@ class App extends React.Component {
       helpModalOpen: false,
 
       // shows help modal (keyboard shortcuts) for large devices only
-      helpEnabled: false
+      helpEnabled: window.innerWidth > deviceBreakpoint
     }
   }
 
@@ -276,13 +278,13 @@ class App extends React.Component {
     this.resizeGrid();
 
     let deviceW = window.innerWidth;
-    if (deviceW < 700 && this.state.helpEnabled){
+    if (deviceW < deviceBreakpoint && this.state.helpEnabled){
       this.setState({
         helpModalOpen: false,
         helpEnabled: false
       });
     }
-    else if (deviceW >= 700 && !this.state.helpEnabled){
+    else if (deviceW >= deviceBreakpoint && !this.state.helpEnabled){
       this.setState({ helpEnabled: true });
     }
   }
