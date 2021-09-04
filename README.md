@@ -8,8 +8,8 @@ Made using:
 * Semantic UI React
 
 ## Features
-- Right-click or drag to draw colored cells
-- Left-click or drag to erase cells
+- Left-click or drag to draw living (coloured) cells
+- Right-click or drag to erase cells
 - Play through automatically using the play/pause button, or step through at your own pace to see how the structures evolve
 - Easily place pre-defined structures on the grid
 - Adjust the play speed and cell colors
