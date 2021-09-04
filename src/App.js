@@ -296,7 +296,9 @@ class App extends React.Component {
 
     // new width and height of grid in cells
     let newW = parseInt((deviceW * 0.8) / this.cellSize);
-    let newH = parseInt((deviceH - 200) / this.cellSize);
+    // 500px is toolbar wrap point; TODO: use flexbox or other instead of hardcoding breakpoint
+    let newH = deviceW < 500 ? parseInt((deviceH - 230) / this.cellSize)
+                             : parseInt((deviceH - 200) / this.cellSize);
 
     // width and height must be at least 5
     if (newW < 5) newW = 5;
@@ -448,6 +450,10 @@ class App extends React.Component {
           open={this.state.helpModalOpen}
           closeFunc={this.closeHelpModal}
         />
+
+        <span className="github-link"><a href="https://github.com/emily-emily/game-of-life-react" target="_blank">
+          <i className="fab fa-github"></i> · Emily Yu
+        </a></span>
       </div>
     );
   }
@@ -473,6 +479,14 @@ class HelpModal extends React.Component {
               </Table.Header>
 
               <Table.Body>
+                <Table.Row>
+                  <Table.Cell>Right-click/drag</Table.Cell>
+                  <Table.Cell>Draw living cell</Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.Cell>Left-click/drag</Table.Cell>
+                  <Table.Cell>Erase living cell</Table.Cell>
+                </Table.Row>
                 <Table.Row>
                   <Table.Cell>esc</Table.Cell>
                   <Table.Cell>Cancel structure placement</Table.Cell>

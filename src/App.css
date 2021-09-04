@@ -1,7 +1,3 @@
-* {
-  box-sizing: border-box;
-}
-
 .app {
   position: fixed;
   height: 100vh;
@@ -27,6 +23,10 @@
 
 .button-container .button {
   margin: 5px 10px;
+}
+
+.github-link a {
+  color: white;
 }
 
 #help-content {
